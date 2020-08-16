@@ -34,6 +34,22 @@
     margin-top: .5em;
 }
 
+.boards-container .board-container:first-child {
+    border-top-left-radius: 1em;
+    border-bottom-left-radius: 1em;
+}
+
+.boards-container .board-container:last-child {
+    border-top-right-radius: 1em;
+    border-bottom-right-radius: 1em;
+}
+
+.attempt-form .btn {
+    font-size: 1.75em;
+    padding-left:  1em;
+    padding-right:  1em;
+}
+
 .board-container {
     background-color: #F8F9FA;
 }
@@ -46,14 +62,11 @@
     padding: 2em;
 }
 
-.board-left {
-    border-top-left-radius: 1em;
-    border-bottom-left-radius: 1em;
-}
-
-.board-right {
-    border-top-right-radius: 1em;
-    border-bottom-right-radius: 1em;
+.board input {
+    width: 7em;
+    overflow: hidden;
+    padding-left: calc(.75rem + .75em);
+    padding-right: 0;
 }
 
 

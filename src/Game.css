@@ -1,0 +1,69 @@
+.game-container {
+    background-color: #F8F9FA;
+    border-radius: 1em;
+    overflow: hidden;
+}
+
+/* Board separators */
+.board-container {
+    border-left: 3px solid #FFDD00;
+    border-right: 3px solid #FFDD00;
+}
+.board-container:first-child {
+    border-left: none;
+}
+.board-container:last-child {
+    border-right: none;
+}
+
+.board-container.disabled {
+    background-color: #E8E9EA;
+}
+
+.board {
+    padding: 2em;
+}
+
+.board input {
+    width: 7em;
+    overflow: hidden;
+    padding-left: calc(.75rem + .75em);
+    padding-right: 0;
+}
+
+.profile-picture {
+    height: 5em;
+    width: 5em;
+    border: 1px solid #FFDD00;
+    background-color: #FFF;
+    padding: .75em;
+}
+
+.history ul {
+    list-style: none;
+    padding: 0;
+}
+
+.history li {
+    margin-top: .5em;
+}
+
+.number {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.75em;
+    letter-spacing: .75em;
+}
+
+.number .badge {
+    letter-spacing: normal;
+    margin-left: 1em;
+}
+
+.badge.disabled {
+    background-color: transparent;
+    color: transparent;
+}
+
+.attempt.badge {
+    font-size: 1.75em;
+}

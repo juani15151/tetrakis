@@ -16,7 +16,6 @@ class GameEngine {
         this.state.players[player.id] = {
             id: player.id,
             name: player.name,
-            number: null, // Chosen by user, will be opponents target.
             target: null,
             attempts: [],
             enabled: true,
@@ -99,6 +98,19 @@ export class SinglePlayerGame extends GameEngine {
     initialize(player) {
         super.initialize(player);
         this.state.players[player.id].target = this._generateNumber();
+    }
+
+}
+
+export class Local2PlayersGame extends GameEngine {
+
+    initialize() {
+        super.initialize({
+            id: 1,
+        });
+        super._addPlayer({
+            id: 2,
+        });
     }
 
 }

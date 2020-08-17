@@ -7,162 +7,51 @@ export default class Game extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            players: {
-                1: this._newPlayer(1),
-                2: this._newPlayer(2),
-            },
-        };
+        this.state = this.props.gameService.getState();
 
-        this.handleAttempt = this.handleAttempt.bind(this);
+        this.onAttempt = this.onAttempt.bind(this);
         this.handleSurrender = this.handleSurrender.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
         this.handleNumberChange = this.handleNumberChange.bind(this);
     }
 
-    _newPlayer(id) {
-        return {
-            id: id,
-            name: "Player " + id,
-            number: null,
-            target: null,
-            attempts: [],
-            isPlaying: false,
-            isFinished: false,
-        }
-    }
-
-    handleAttempt(playerID, attempt) {
-        if (!this._isValidNumber(attempt) || this.state.players[playerID].isFinished) {
-            return;
-        }
-
-        const result = this._checkNumber(attempt, this.state.players[playerID].target);
-
-        const players = JSON.parse(JSON.stringify(this.state.players));
-        players[playerID].attempts.push({
-            number: attempt,
-            result: result,
-        });
-        players[playerID].isFinished = result[0] === 4;
-
-        // Change turn to next player
-        const playingOpponent = Object.values(players)
-            .find(player => player.id !== playerID && !player.isFinished);
-        if(playingOpponent) {
-            players[playerID].isPlaying = false;
-            playingOpponent.isPlaying = true;
-        }
-
-        this.setState({
-            players: players
+    componentDidMount() {
+        const scope = this;
+        this.stateListener = this.props.gameService.registerStateListener((state) => {
+            scope.setState(state);
         });
     }
 
-    _generateNumber() {
-        const validDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-
-        let number = "";
-        for (let i = 0; i < 4; i++) {
-            const digitIndex = Math.floor(Math.random() * validDigits.length);
-            number += validDigits[digitIndex];
-            validDigits.splice(digitIndex, 1);
-        }
-
-        return number;
+    componentWillUnmount() {
+        this.props.gameService.removeStateListener(this.stateListener);
     }
 
-    _isValidNumber(number) {
-        if (number.length !== 4) {
-            return false;
-        }
-
-        const validDigits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-        for (let i = 0; i < 4; i++) {
-            const digit = number[i];
-            const digitIndex = validDigits.findIndex((element) => element === digit);
-            if (digitIndex < 0) {
-                return false;
-            }
-            validDigits.splice(digitIndex, 1);
-        }
-
-        return true;
-    }
-
-    _checkNumber(attempt, target) {
-        const result = [0, 0];
-
-        for (let i = 0; i < 4; i++) {
-            const attemptDigit = attempt[i];
-            for (let j = 0; j < 4; j++) {
-                const targetDigit = target[j];
-                if (attemptDigit === targetDigit) {
-                    if (i === j) {
-                        result[0]++;
-                    } else {
-                        result[1]++;
-                    }
-                }
-            }
-        }
-
-        return result;
+    onAttempt(playerID, attempt) {
+        this.props.gameService.actionAttempt(playerID, attempt);
     }
 
     handleSurrender(playerID) {
-        const players = JSON.parse(JSON.stringify(this.state.players));
-        players[playerID].isFinished = true;
-
-        this.setState({
-            players: players
-        });
-    }
-
-    handleNameChange(playerID, newName) {
-        // TODO: Validate is empty.
-        const players = JSON.parse(JSON.stringify(this.state.players));
-        players[playerID].name = newName;
-
-        this.setState({
-            players: players
-        });
+        this.props.gameService.actionSurrender(playerID);
     }
 
     handleNumberChange(playerID, newNumber) {
-        // TODO: Validate is empty.
-        const players = JSON.parse(JSON.stringify(this.state.players));
-
-        Object.values(players).forEach(player => {
-            if(player.id === playerID) {
-                player.number = newNumber;
-                player.isPlaying = false;
-            } else {
-                player.target = newNumber;
-                player.isPlaying = true;
-            }
-        });
-
-        this.setState({
-            players: players
-        });
+        this.props.gameService.actionSetNumber(playerID, newNumber);
     }
 
     renderBoards() {
         return Object.keys(this.state.players).map((id) => {
             const player = this.state.players[id];
-            const isUserEnabled =  !player.name
-                || !player.number
-                || (player.target && player.isPlaying);
+            const isUserEnabled = !player.number || (player.target && player.isPlaying);
             const isUserFinished = player.isFinished;
 
             return (
-                <div className={'col board-container ' + (isUserEnabled && !isUserFinished ? '' : 'disabled')}>
+                <div
+                    className={'col board-container ' + (isUserEnabled && !isUserFinished ? '' : 'disabled')}
+                    key={id}
+                >
                     <GameBoard
                         player={player}
-                        onAttempt={this.handleAttempt}
+                        onAttempt={this.onAttempt}
                         onSurrender={this.handleSurrender}
-                        onNameChange={this.handleNameChange}
                         onNumberChange={this.handleNumberChange}
                         enabled={isUserEnabled && !isUserFinished}
                     />
@@ -193,7 +82,7 @@ class GameBoard extends React.Component {
                     onSurrender={() => this.props.onSurrender(player.id)}
                     onNameChange={this.props.onNameChange}
                 />
-                {this.props.enabled && player.name && !player.number &&
+                {this.props.enabled && !player.number &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p title="Your opponent will have to guess it">Set your number</p>
@@ -202,14 +91,14 @@ class GameBoard extends React.Component {
                         </div>
                     </div>
                 }
-                {!this.props.enabled && player.name && player.number && !player.target &&
+                {!this.props.enabled && player.number && !player.target &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p>Waiting for the other player to choose a number.</p>
                         </div>
                     </div>
                 }
-                {player.name && player.number && player.target &&
+                {player.number && player.target &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p>Guess the number</p>

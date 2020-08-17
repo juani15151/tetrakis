@@ -1,0 +1,16 @@
+.game-menu {
+    padding: 2em;
+    background-color: #F8F9FA;
+    border-radius: 1em;
+}
+
+.game-menu .btn {
+    margin-top: 1.5em;
+    font-size: 1.25em;
+    font-weight: bold;
+    background-color: #FFDD00;
+}
+
+.game-menu .btn:hover {
+    background-color: #FFD000;
+}

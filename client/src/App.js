@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Game from './Game';
 import MultiplayerGameService from './services/MultiplayerGameService';
+import OnlineGameService from "./services/OnlineGameService";
 
 export default class App extends React.Component {
 
@@ -28,7 +29,9 @@ export default class App extends React.Component {
                 gameService: new MultiplayerGameService()
             });
         } else if (App.GAME_MODES.ONLINE === gameMode) {
-
+            this.setState({
+                gameService: new OnlineGameService(roomId)
+            });
         }
     }
 
@@ -52,8 +55,15 @@ class GameModeMenu extends React.Component {
         super(props);
         this.state = {
             showRoomInput: false,
-            roomId: null,
+            roomId: "",
         }
+
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleSubmit(e) {
+        e.preventDefault();
+        this.props.onSetGameMode(App.GAME_MODES.ONLINE, this.state.roomId);
     }
 
     render() {
@@ -99,15 +109,16 @@ class GameModeMenu extends React.Component {
                             }
                             {/* TODO: Focus input after click */}
                             {this.state.showRoomInput &&
-                            <input
-                                className="form-control btn"
-                                placeholder="Match ID"
-                                value={this.state.roomId}
-                                onChange={(event => {
-                                    this.setState({roomId: event.target.value})
-                                })}
-                                onSubmit={() => {this.props.onSetGameMode(App.GAME_MODES.ONLINE, this.state.roomId)}}
-                            />
+                            <form onSubmit={this.handleSubmit}>
+                                <input
+                                    className="form-control btn"
+                                    placeholder="Match ID"
+                                    value={this.state.roomId}
+                                    onChange={(event => {
+                                        this.setState({roomId: event.target.value})
+                                    })}
+                                />
+                            </form>
                             }
                         </div>
                     </div>

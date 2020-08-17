@@ -40,7 +40,10 @@ export default class Game extends React.Component {
     renderBoards() {
         return Object.keys(this.state.players).map((id) => {
             const player = this.state.players[id];
-            const isUserEnabled = !player.number || (player.target && player.isPlaying);
+            if(!player) {
+                return null; // TODO: Render waiting msg.
+            }
+            const isUserEnabled = this.props.gameService.isPlayerEnabled(player);
             const isUserFinished = player.isFinished;
 
             return (
@@ -63,6 +66,9 @@ export default class Game extends React.Component {
     render() {
         return (
             <div className="container game-container">
+                {this.state.roomId &&
+                    <p>Room ID: {this.state.roomId}</p>
+                }
                 <div className="row text-center">
                     {this.renderBoards()}
                 </div>
@@ -82,16 +88,19 @@ class GameBoard extends React.Component {
                     onSurrender={() => this.props.onSurrender(player.id)}
                     onNameChange={this.props.onNameChange}
                 />
-                {this.props.enabled && !player.number &&
+                {!player.number &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p title="Your opponent will have to guess it">Set your number</p>
-                            <NumberInput onSubmit={(number) => this.props.onNumberChange(player.id, number)}/>
+                            <NumberInput
+                                onSubmit={(number) => this.props.onNumberChange(player.id, number)}
+                                disabled={!this.props.enabled}
+                            />
                             {/* TODO: Allow user to choose a random number. */}
                         </div>
                     </div>
                 }
-                {!this.props.enabled && player.number && !player.target &&
+                {player.number && !player.target &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p>Waiting for the other player to choose a number.</p>
@@ -171,17 +180,17 @@ class GameBar extends React.Component {
     render() {
         return (
             <div className="row align-items-center justify-content-around">
-                <div className='col-2'>
+                <div className='col-12 col-lg-2'>
                     <img className="profile-picture rounded-circle" src={user}/>
                 </div>
-                <div className='col-6 text-left'>
+                <div className='col-12 col-lg-6 text-center text-lg-left'>
                     <div className='pl-2'>{this.renderName()}</div>
                 </div>
                 <div
-                    className='col-4 text-right number target-number'
+                    className='col-12 col-lg-4 text-center text-lg-right'
                     onClick={this.props.onSurrender}
                     title="Click to surrender and reveal the target number."
-                >{this.renderTargetNumber()}</div>
+                ><div className="number">{this.renderTargetNumber()}</div></div>
             </div>
         );
     }

@@ -7,6 +7,10 @@ export default class GameService {
         }
     }
 
+    destroy() {
+
+    }
+
     getState() {
         return JSON.parse(JSON.stringify(this.state));
     }
@@ -67,6 +71,10 @@ export default class GameService {
 
     onAfterActionSetNumber(playerID, number, state) {
         // Extension point for subclasses.
+    }
+
+    isPlayerEnabled(player) {
+        throw Error("Not implemented"); // MUST be implemented by subclasses.
     }
 }
 

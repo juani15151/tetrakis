@@ -42,4 +42,7 @@ export default class MultiplayerGameService extends GameService {
         });
     }
 
+    isPlayerEnabled(player) {
+        return !player.number || (player.target && player.isPlaying);
+    }
 }

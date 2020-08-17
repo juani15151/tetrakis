@@ -1,4 +1,4 @@
-const Game = require('./game')
+const Game = require('./Game')
 const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
@@ -17,16 +17,14 @@ app.post('/api/room', (request, response) => {
     const user = request.body.user;
 
     const roomId = database.nextRoomId++;
-    database.rooms[roomId] = Game.initializeRoom(user);
+    database.rooms[roomId] = Game.initializeRoom(roomId, user);
 
-    response.json({
-        roomId: roomId
-    });
+    response.json(database.rooms[roomId]);
 });
 
 app.put('/api/room/:roomId', (request, response) => {
     // TODO: Handle room not found exceptions.
-    const nextState = response.body;
+    const nextState = request.body;
     const room = database.rooms[request.params.roomId];
     Game.updateRoom(room, nextState);
 
@@ -40,7 +38,7 @@ app.post('/api/room/:roomId/join', (request, response) => {
     const added = Game.addPlayer(room, user);
 
     if (added) {
-        response.status(200);
+        response.json(room);
     } else {
         response.status(400).json({
             msg: 'Room is full'

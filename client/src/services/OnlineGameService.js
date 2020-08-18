@@ -80,13 +80,19 @@ export default class OnlineGameService extends GameService {
     }
 
     async updateRoom(roomId, state) {
+        // Update only current user. Avoids concurrency issues.
+        const userState = {
+            players: {}
+        };
+        userState.players[this.currentUserId] = state.players[this.currentUserId];
+
         return await fetch('/api/room/' + roomId, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify(state)
+            body: JSON.stringify(userState)
         });
     }
 

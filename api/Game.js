@@ -25,7 +25,7 @@ module.exports = class Game {
 
     static addPlayer(room, user) {
         if(room.players[2].isBot) {
-            room.players[2] = this._newPlayer(user);
+            room.players[2].isBot = false;
             return true;
         }
         return false;
@@ -33,7 +33,14 @@ module.exports = class Game {
 
     static updateRoom(room, nextState) {
         // TODO: Validate user input.
-        Object.assign(room.players, nextState.players);
+        const currentUserId = Object.keys(nextState.players)[0];
+        const opponentId = currentUserId === "2" ? 1 : 2;
+
+        if(!room.players[opponentId].target && nextState.players[currentUserId].number) {
+            room.players[opponentId].target = nextState.players[currentUserId].number;
+        }
+
+        room.players[currentUserId] = nextState.players[currentUserId];
     }
 
 }

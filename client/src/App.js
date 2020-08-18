@@ -75,11 +75,16 @@ class GameModeMenu extends React.Component {
         }
 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleJoinRoomClick = this.handleJoinRoomClick.bind(this);
     }
 
     handleSubmit(e) {
         e.preventDefault();
         this.props.onSetGameMode(App.GAME_MODES.ONLINE, this.state.roomId);
+    }
+
+    handleJoinRoomClick() {
+        this.setState({showRoomInput: true});
     }
 
     render() {
@@ -119,21 +124,19 @@ class GameModeMenu extends React.Component {
                             <button
                                 type="button"
                                 className={"btn"}
-                                onClick={() => {
-                                    this.setState({showRoomInput: true})
-                                }}
+                                onClick={this.handleJoinRoomClick}
                             >Join online match</button>
                             }
-                            {/* TODO: Focus input after click */}
                             {this.state.showRoomInput &&
                             <form onSubmit={this.handleSubmit}>
                                 <input
                                     className="form-control btn"
-                                    placeholder="Match ID"
+                                    placeholder="Room ID"
                                     value={this.state.roomId}
                                     onChange={(event => {
                                         this.setState({roomId: event.target.value})
                                     })}
+                                    autoFocus={true}
                                 />
                             </form>
                             }

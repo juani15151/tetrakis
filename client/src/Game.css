@@ -1,7 +1,17 @@
 .game-container {
     background-color: #F8F9FA;
-    border-radius: 1em;
+    border-radius: 1rem;
     overflow: hidden;
+    min-height: 15em;
+    border: .5rem solid #F8F9FA;
+}
+
+.game-bar {
+    background-color: #FFDD00;
+    border-top-left-radius: .8rem;
+    border-top-right-radius: .8rem;
+    padding: .75em;
+    font-size: 1.25em;
 }
 
 /* Board separators */

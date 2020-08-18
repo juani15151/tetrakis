@@ -1,6 +1,9 @@
 import React from "react";
 import './Game.css';
-import user from "./user.png";
+import user from "./images/user.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import ErrorBoundary from "./utils/ErrorBoundary";
 
 export default class Game extends React.Component {
 
@@ -37,6 +40,14 @@ export default class Game extends React.Component {
         this.props.gameService.actionSetNumber(playerID, newNumber);
     }
 
+    getTitle() {
+        if(this.state.roomId) {
+            return "Game Room # " + this.state.roomId;
+        } else {
+            return "Local Game";
+        }
+    }
+
     renderBoards() {
         return Object.keys(this.state.players).map((id) => {
             const player = this.state.players[id];
@@ -66,11 +77,32 @@ export default class Game extends React.Component {
     render() {
         return (
             <div className="container game-container">
-                {this.state.roomId &&
-                    <p>Room ID: {this.state.roomId}</p>
-                }
-                <div className="row text-center">
-                    {this.renderBoards()}
+                <GameBar
+                    title={this.getTitle()}
+                    onExit={this.props.onExit}
+                />
+                <ErrorBoundary>
+                    <div className="row text-center">
+                        {this.renderBoards()}
+                    </div>
+                </ErrorBoundary>
+            </div>
+        );
+    }
+}
+
+class GameBar extends React.Component {
+    render() {
+        return (
+            <div className="row game-bar">
+                <div className="col">
+
+                </div>
+                <div className="col text-center">
+                    {this.props.title}
+                </div>
+                <div className="col text-right">
+                    <FontAwesomeIcon icon={faTimesCircle} onClick={this.props.onExit} className="cursor-pointer"/>
                 </div>
             </div>
         );
@@ -83,7 +115,7 @@ class GameBoard extends React.Component {
         const player = this.props.player;
         return(
             <div className={'board'}>
-                <GameBar
+                <BoardBar
                     player={player}
                     onSurrender={() => this.props.onSurrender(player.id)}
                     onNameChange={this.props.onNameChange}
@@ -125,7 +157,7 @@ class GameBoard extends React.Component {
 
 }
 
-class GameBar extends React.Component {
+class BoardBar extends React.Component {
 
     constructor(props) {
         super(props);

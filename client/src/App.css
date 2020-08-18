@@ -4,11 +4,15 @@
     border-radius: 1em;
 }
 
+.game-menu h2 {
+    margin-bottom: 1em;
+}
+
 .game-menu .btn {
-    margin-top: 1.5em;
     font-size: 1.25em;
     font-weight: bold;
     background-color: #FFDD00;
+    min-width: 12em;
 }
 
 .game-menu .btn:hover {

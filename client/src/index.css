@@ -3,6 +3,7 @@ html, body {
   font-family: 'Roboto', sans-serif;
   color: #030303;
 }
+
 body {
   display: -ms-flexbox;
   display: -webkit-box;
@@ -16,5 +17,14 @@ body {
   padding-top: 40px;
   padding-bottom: 40px;
   background-color: #FFDD00;
-  background-image: url("background.jpg");
+  background-image: url("images/background.jpg");
+}
+
+h1 {
+  font-family: 'Merienda', sans-serif;
+  font-size: 5em;
+}
+
+.cursor-pointer{
+  cursor: pointer;
 }

@@ -76,6 +76,11 @@ export default class GameService {
     isPlayerEnabled(player) {
         throw Error("Not implemented"); // MUST be implemented by subclasses.
     }
+
+    getOpponent(currentPlayer) {
+        return Object.values(this.getState().players)
+            .find((player) => player.id !== currentPlayer.id);
+    }
 }
 
 export class GameUtils {

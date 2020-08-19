@@ -64,6 +64,7 @@ export default class Game extends React.Component {
                 >
                     <GameBoard
                         player={player}
+                        opponent={this.props.gameService.getOpponent(player)}
                         onAttempt={this.onAttempt}
                         onSurrender={this.handleSurrender}
                         onNumberChange={this.handleNumberChange}
@@ -117,6 +118,7 @@ class GameBoard extends React.Component {
             <div className={'board'}>
                 <BoardBar
                     player={player}
+                    opponent={this.props.opponent}
                     onSurrender={() => this.props.onSurrender(player.id)}
                     onNameChange={this.props.onNameChange}
                 />
@@ -188,17 +190,17 @@ class BoardBar extends React.Component {
     }
 
     renderTargetNumber() {
-        if(!this.props.player.target) {
-            return "____";
-        } else if(!this.props.player.isFinished) {
+        if (this.props.opponent.isFinished) {
+            return this.props.player.number;
+        } else if (this.props.player.number) {
             return "####";
         } else {
-            return this.props.player.target;
+            return "____";
         }
     }
 
     renderName() {
-        if(this.props.player.name) {
+        if (this.props.player.name) {
             return <h2 className="cover-heading">{this.props.player.name}</h2>;
         } else {
             return (

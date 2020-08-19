@@ -5,36 +5,52 @@ export default class OnlineGameService extends GameService {
 
     constructor(roomId) {
         super();
-        this.listenRoom = this.listenRoom.bind(this);
+        this.onMessage = this.onMessage.bind(this);
 
-        if (!roomId) {
-            this.currentUserId = 1;
-            this.createRoom({
-                id: 1
-            }).then((response) => this.listenRoom(response.roomId));
-        } else {
-            this.currentUserId = 2;
-            this.listenRoom(roomId);
-        }
+        this.setupSocket(roomId);
     }
 
-    listenRoom(roomId) {
+    setupSocket(roomId) {
         // Setup socket.
         const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:')
-        const socketUrl = socketProtocol + '//' + window.location.hostname + ':3080/api/room/' + roomId
+        const socketUrl = socketProtocol + '//' + window.location.hostname + ':3080/api/room/'
         this.roomSocket = new W3CWebSocket(socketUrl);
 
         this.roomSocket.onopen = () => {
-            console.log("Connected to room #" + roomId);
-        };
-        this.roomSocket.onmessage = (message) => {
-            super.setState(JSON.parse(message.data));
-            if(this.state.players[this.currentUserId].isBot) {
-                const nextState = this.getState();
-                nextState.players[this.currentUserId].isBot = false;
-                this.setState(nextState);
+            console.log("Connected to room server");
+            if(!roomId) {
+                this.roomSocket.send(JSON.stringify({
+                    type: "create"
+                }));
+            } else {
+                this.roomSocket.send(JSON.stringify({
+                    type: "join",
+                    data: {
+                        roomId: roomId
+                    }
+                }));
             }
+        };
+
+        this.roomSocket.onmessage = this.onMessage;
+    }
+
+    onMessage(message) {
+        message = JSON.parse(message.data);
+        const type = message.type.toLowerCase();
+        if(this["handle_" + type]) {
+            this["handle_" + type](message.data);
+        } else {
+            console.error("Unknown message type: " + type);
         }
+    }
+
+    handle_update(data) {
+        super.setState(data);
+    }
+
+    handle_setuserid(data) {
+        this.currentUserId = data.userId;
     }
 
     destroy() {
@@ -51,26 +67,15 @@ export default class OnlineGameService extends GameService {
                 players: {}
             };
             userState.players[this.currentUserId] = nextState.players[this.currentUserId];
-            this.roomSocket.send(JSON.stringify(userState));
+            this.roomSocket.send(JSON.stringify({
+                type: "update",
+                data: userState
+            }));
         }
     }
 
     isPlayerEnabled(player) {
         return this.currentUserId === player.id;
-    }
-
-    async createRoom(user) {
-        const response = await fetch('/api/room', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                user: user
-            })
-        });
-        return await response.json();
     }
 
 }

@@ -120,7 +120,12 @@ class GameBoard extends React.Component {
                     onSurrender={() => this.props.onSurrender(player.id)}
                     onNameChange={this.props.onNameChange}
                 />
-                {!player.number &&
+                {player.isBot &&
+                    <div className="row justify-content-center mt-3">
+                        Waiting for another player to connect...
+                    </div>
+                }
+                {!player.isBot && !player.number &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p title="Your opponent will have to guess it">Set your number</p>
@@ -132,14 +137,14 @@ class GameBoard extends React.Component {
                         </div>
                     </div>
                 }
-                {player.number && !player.target &&
+                {!player.isBot && player.number && !player.target &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p>Waiting for the other player to choose a number.</p>
                         </div>
                     </div>
                 }
-                {player.number && player.target &&
+                {!player.isBot && player.number && player.target &&
                     <div className="row justify-content-center mt-3">
                         <div className="col-auto">
                             <p>Guess the number</p>

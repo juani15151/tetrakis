@@ -1,50 +1,58 @@
 import GameService from "./GameService";
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 export default class OnlineGameService extends GameService {
 
-    static UPDATE_INTERVAL = 5000;
-
     constructor(roomId) {
         super();
+        this.listenRoom = this.listenRoom.bind(this);
+
         if (!roomId) {
             this.currentUserId = 1;
             this.createRoom({
                 id: 1
-            }).then(super.setState.bind(this));
+            }).then((response) => this.listenRoom(response.roomId));
         } else {
             this.currentUserId = 2;
-            this.joinRoom(roomId, {
-                id: 2,
-            }).then(super.setState.bind(this));
+            this.listenRoom(roomId);
         }
-
-        this.updateTimer = setInterval(this._updateState.bind(this), OnlineGameService.UPDATE_INTERVAL);
     }
 
-    _updateState() {
-        if (this.state.roomId) {
-            this.getRoom(this.state.roomId)
-                .then(super.setState.bind(this));
+    listenRoom(roomId) {
+        // Setup socket.
+        const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:')
+        const socketUrl = socketProtocol + '//' + window.location.hostname + ':3080/api/room/' + roomId
+        this.roomSocket = new W3CWebSocket(socketUrl);
+
+        this.roomSocket.onopen = () => {
+            console.log("Connected to room #" + roomId);
+        };
+        this.roomSocket.onmessage = (message) => {
+            super.setState(JSON.parse(message.data));
+            if(this.state.players[this.currentUserId].isBot) {
+                const nextState = this.getState();
+                nextState.players[this.currentUserId].isBot = false;
+                this.setState(nextState);
+            }
         }
     }
 
     destroy() {
-        clearInterval(this.updateTimer);
+        if(this.roomSocket) {
+            this.roomSocket.close();
+        }
         super.destroy();
     }
 
     setState(nextState) {
-        super.setState(nextState);
-        this.updateRoom(nextState.roomId, nextState)
-            .then(super.setState.bind(this)); // In case there are new changes from server.
-    }
-
-    onAfterActionSetNumber(playerID, number, state) {
-        Object.values(state.players).forEach(player => {
-            if(player.id !== playerID) {
-                player.target = number;
-            }
-        });
+        if(this.roomSocket) {
+            // Update only current user. Avoids concurrency issues.
+            const userState = {
+                players: {}
+            };
+            userState.players[this.currentUserId] = nextState.players[this.currentUserId];
+            this.roomSocket.send(JSON.stringify(userState));
+        }
     }
 
     isPlayerEnabled(player) {
@@ -61,46 +69,6 @@ export default class OnlineGameService extends GameService {
             body: JSON.stringify({
                 user: user
             })
-        });
-        return await response.json();
-    }
-
-    async joinRoom(roomId, user) {
-        const response = await fetch('/api/room/' + roomId + '/join', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                user: user
-            })
-        });
-        return await response.json();
-    }
-
-    async updateRoom(roomId, state) {
-        // Update only current user. Avoids concurrency issues.
-        const userState = {
-            players: {}
-        };
-        userState.players[this.currentUserId] = state.players[this.currentUserId];
-
-        return await fetch('/api/room/' + roomId, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(userState)
-        });
-    }
-
-    async getRoom(roomId) {
-        const response = await fetch('/api/room/' + roomId, {
-            headers: {
-                'Accept': 'application/json'
-            }
         });
         return await response.json();
     }

@@ -12,9 +12,7 @@ export default class OnlineGameService extends GameService {
 
     setupSocket(roomId) {
         // Setup socket.
-        const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:')
-        const socketUrl = socketProtocol + '//' + window.location.hostname + ':3080/api/room/'
-        this.roomSocket = new W3CWebSocket(socketUrl);
+        this.roomSocket = new W3CWebSocket(process.env.REACT_APP_SERVER_URL + "/api/room");
 
         this.roomSocket.onopen = () => {
             console.log("Connected to room server");

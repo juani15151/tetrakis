@@ -4,7 +4,7 @@ const expressWs = require('express-ws')
 const wsInstance = expressWs(express());
 const app = wsInstance.app;
 
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); // TODO: Remove if not required on WebSocket.
 const port = 3080;
 
 
@@ -44,12 +44,22 @@ const handleMessage = {
         sendUpdate(ws.roomId);
     },
     "join": (ws, data) => {
-        // TODO: Validate room exists.
+        let roomId;
+        try {
+            roomId = parseInt(data.roomId);
+        } catch (e) {
+            roomId = 0;
+        }
+        const room = database.rooms[roomId];
+        if(!room) {
+            return;
+        }
+
         // TODO: Validate only 2 active users per room.
-        ws.roomId = parseInt(data.roomId);
+        ws.roomId = roomId;
         ws.userId = 2;
 
-        database.rooms[ws.roomId].players[ws.userId].isBot = false;
+        room.players[ws.userId].isBot = false;
         ws.send(JSON.stringify({
             type: 'setUserId',
             data: {
@@ -60,12 +70,20 @@ const handleMessage = {
     },
     "update": (ws, data) => {
         const room = database.rooms[ws.roomId];
-        Game.updateRoom(room, data);
-        sendUpdate(ws.roomId);
+        if(room) {
+            Game.updateRoom(room, data);
+            sendUpdate(ws.roomId);
+        }
     },
     "close": (ws, data) => {
         // TODO: When no more clients listen to a room, delete it.
-        // TODO: Change user to bot to signal leave.
+        if(ws.roomId && ws.userId) {
+            const roomId = ws.roomId;
+            const room = database.rooms[roomId];
+            Game.removePlayer(room, ws.userId);
+            ws.roomId = null;
+            sendUpdate(roomId);
+        }
     }
 }
 

@@ -31,6 +31,12 @@ module.exports = class Game {
         return false;
     }
 
+    static removePlayer(room, playerId) {
+        if(room.players[playerId]) {
+            room.players[playerId].isBot = true;
+        }
+    }
+
     static updateRoom(room, nextState) {
         // TODO: Validate user input.
         const currentUserId = Object.keys(nextState.players)[0];

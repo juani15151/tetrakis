@@ -48,9 +48,24 @@ export default class Game extends React.Component {
         }
     }
 
+    playerFoundNumber(player) {
+        return player.isFinished
+            && player.attempts.slice(-1)[0].result[0] === 4; // Last attempt found.
+    }
+
+    playerWon(player, opponent) {
+        return this.playerFoundNumber(player)
+            && (!opponent
+                || (opponent.isFinished && !this.playerFoundNumber(opponent))
+                || opponent.attempts.length > player.attempts.length
+            );
+    }
+
+
     renderBoards() {
         return Object.keys(this.state.players).map((id) => {
             const player = this.state.players[id];
+            const opponent = this.props.gameService.getOpponent(player);
             if(!player) {
                 return null; // TODO: Render waiting msg.
             }
@@ -59,12 +74,15 @@ export default class Game extends React.Component {
 
             return (
                 <div
-                    className={'col board-container ' + (isUserEnabled && !isUserFinished ? '' : 'disabled')}
+                    className={'col board-container '
+                    + (this.playerWon(player, opponent) ? 'winner'
+                            : isUserEnabled && !isUserFinished ? '' : 'disabled'
+                    )}
                     key={id}
                 >
                     <GameBoard
                         player={player}
-                        opponent={this.props.gameService.getOpponent(player)}
+                        opponent={opponent}
                         onAttempt={this.onAttempt}
                         onSurrender={this.handleSurrender}
                         onNumberChange={this.handleNumberChange}

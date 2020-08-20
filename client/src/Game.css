@@ -40,8 +40,16 @@
     }
 }
 
-.board-container.disabled {
+.board-container.disabled, .board-container.winner {
     background-color: #E8E9EA;
+}
+
+.board-container.winner {
+    background-image: url("images/trophy.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-origin: content-box;
 }
 
 .board {

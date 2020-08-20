@@ -15,15 +15,29 @@
 }
 
 /* Board separators */
-.board-container {
-    border-left: 3px solid #FFDD00;
-    border-right: 3px solid #FFDD00;
+@media (max-width: 575px) {
+    .board-container {
+        border-top: 3px solid #FFDD00;
+        border-bottom: 3px solid #FFDD00;
+    }
+    .board-container:first-child {
+        border-top: none;
+    }
+    .board-container:last-child {
+        border-bottom: none;
+    }
 }
-.board-container:first-child {
-    border-left: none;
-}
-.board-container:last-child {
-    border-right: none;
+@media (min-width: 576px) {
+    .board-container {
+        border-left: 3px solid #FFDD00;
+        border-right: 3px solid #FFDD00;
+    }
+    .board-container:first-child {
+        border-left: none;
+    }
+    .board-container:last-child {
+        border-right: none;
+    }
 }
 
 .board-container.disabled {
@@ -63,6 +77,12 @@
     font-size: 1.75em;
     letter-spacing: .75em;
     padding-left: .75em;
+}
+
+@media (max-width: 1023px) {
+    .history .number {
+        font-size: 2vh;
+    }
 }
 
 .number .badge {

@@ -96,13 +96,13 @@ class GameBar extends React.Component {
     render() {
         return (
             <div className="row game-bar">
-                <div className="col">
+                <div className="col-2 d-none d-sm-block">
 
                 </div>
-                <div className="col text-center">
+                <div className="col text-left text-sm-center">
                     {this.props.title}
                 </div>
-                <div className="col text-right">
+                <div className="col-2 text-right">
                     <FontAwesomeIcon icon={faTimesCircle} onClick={this.props.onExit} className="cursor-pointer"/>
                 </div>
             </div>
@@ -115,7 +115,7 @@ class GameBoard extends React.Component {
     render() {
         const player = this.props.player;
         return(
-            <div className={'board'}>
+            <div className="board p-1 p-sm-2">
                 <BoardBar
                     player={player}
                     opponent={this.props.opponent}
@@ -219,14 +219,18 @@ class BoardBar extends React.Component {
     render() {
         return (
             <div className="row align-items-center justify-content-around">
-                <div className='col-12 col-lg-2'>
-                    <img className="profile-picture rounded-circle" src={user}/>
-                </div>
-                <div className='col-12 col-lg-6 text-center text-lg-left'>
-                    <div className='pl-2'>{this.renderName()}</div>
+                <div className="col-12 col-xl-8">
+                    <div className="row align-items-center">
+                        <div className='col-12 col-lg-4'>
+                            <img className="profile-picture rounded-circle" src={user}/>
+                        </div>
+                        <div className='col-12 col-lg-8 text-center text-lg-left'>
+                            <div className='pl-2'>{this.renderName()}</div>
+                        </div>
+                    </div>
                 </div>
                 <div
-                    className='col-12 col-lg-4 text-center text-lg-right'
+                    className='col-12 col-xl-4 text-center text-xl-right'
                     onClick={this.props.onSurrender}
                     title="Click to surrender and reveal the target number."
                 ><div className="number">{this.renderTargetNumber()}</div></div>
@@ -299,6 +303,7 @@ class NumberInput extends  React.Component {
                     value={this.state.userText}
                     ref={this.inputRef}
                     disabled={this.props.disabled}
+                    autoFocus={true}
                 />
             </form>
         );

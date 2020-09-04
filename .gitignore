@@ -2,3 +2,6 @@
 .idea/
 ngrok.yml
 *.env
+
+# production
+node_modules/

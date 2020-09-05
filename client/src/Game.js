@@ -103,6 +103,7 @@ export default class Game extends React.Component {
                 <ErrorBoundary>
                     <div className="row text-center">
                         {this.renderBoard(playerIDs[0])}
+                        {/* TODO: When playing locally with 2 players, we need 2 boards. */}
                         <div className="col-12 col-md-3 p-0">
                             <NumbersSheet/>
                         </div>
@@ -146,7 +147,9 @@ class GameBoard extends React.Component {
                 />
                 {player.isBot &&
                     <div className="row justify-content-center mt-3">
-                        Waiting for another player to connect...
+                        <div className="col-auto alert alert-info">
+                            Waiting for another player to connect...
+                        </div>
                     </div>
                 }
                 {!player.isBot && !player.number &&
@@ -163,8 +166,8 @@ class GameBoard extends React.Component {
                 }
                 {!player.isBot && player.number && !player.target &&
                     <div className="row justify-content-center mt-3">
-                        <div className="col-auto">
-                            <p>Waiting for the other player to choose a number.</p>
+                        <div className="col-auto alert alert-info">
+                            Waiting for the other player to choose a number...
                         </div>
                     </div>
                 }

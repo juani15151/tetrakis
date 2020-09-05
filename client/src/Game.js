@@ -345,9 +345,9 @@ class History extends React.Component {
                 <li key={index} className="number">
                     {value.number}
                     <span
-                        className={'badge badge-pill ' + (value.result[0] > 0 ? 'badge-success' : 'disabled')}>{value.result[0]}B</span>
+                        className={'badge badge-pill ' + (value.result[0] > 0 ? 'badge-success' : 'badge-secondary')}>{value.result[0]}B</span>
                     <span
-                        className={'badge badge-pill ' + (value.result[1] > 0 ? 'badge-primary' : 'disabled')}>{value.result[1]}R</span>
+                        className={'badge badge-pill ' + (value.result[1] > 0 ? 'badge-primary' : 'badge-secondary')}>{value.result[1]}R</span>
                 </li>
             );
         });

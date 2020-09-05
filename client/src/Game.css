@@ -100,11 +100,6 @@
     margin-left: 1em;
 }
 
-.badge.disabled {
-    background-color: transparent;
-    color: transparent;
-}
-
 .attempt.badge {
     font-size: 1.75em;
 }

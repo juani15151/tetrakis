@@ -69,6 +69,10 @@ export default class GameService {
         this.setState(state);
     }
 
+    actionPlayAgain(playerID) {
+        throw Error("Not implemented"); // MUST be implemented by subclasses.
+    }
+
     onAfterActionSetNumber(playerID, number, state) {
         // Extension point for subclasses.
     }

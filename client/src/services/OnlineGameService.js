@@ -72,6 +72,13 @@ export default class OnlineGameService extends GameService {
         }
     }
 
+    actionPlayAgain(playerID) {
+        this.roomSocket.send(JSON.stringify({
+            type: "reset",
+            data: null
+        }));
+    }
+
     isPlayerEnabled(player) {
         return this.currentUserId === player.id;
     }

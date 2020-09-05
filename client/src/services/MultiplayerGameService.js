@@ -9,6 +9,14 @@ export default class MultiplayerGameService extends GameService {
         state.players[2] = this._newPlayer(2);
     }
 
+    actionPlayAgain(playerID) {
+        const state = this.getState();
+        state.players[1] = this._newPlayer(1);
+        state.players[2] = this._newPlayer(2);
+
+        this.setState(state);
+    }
+
     _newPlayer(id) {
         return {
             id: id,

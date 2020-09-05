@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import ErrorBoundary from "./utils/ErrorBoundary";
 import NumbersSheet from "./NumbersSheet";
+import App from "./App";
 
 export default class Game extends React.Component {
 
@@ -16,6 +17,7 @@ export default class Game extends React.Component {
         this.onAttempt = this.onAttempt.bind(this);
         this.handleSurrender = this.handleSurrender.bind(this);
         this.handleNumberChange = this.handleNumberChange.bind(this);
+        this.handlePlayAgain = this.handlePlayAgain.bind(this);
     }
 
     componentDidMount() {
@@ -41,6 +43,10 @@ export default class Game extends React.Component {
         this.props.gameService.actionSetNumber(playerID, newNumber);
     }
 
+    handlePlayAgain(playerID) {
+        this.props.gameService.actionPlayAgain(playerID);
+    }
+
     getTitle() {
         if(this.state.roomId) {
             return "Game code: " + this.state.roomId;
@@ -61,7 +67,6 @@ export default class Game extends React.Component {
                 || opponent.attempts.length > player.attempts.length
             );
     }
-
 
     renderBoard(playerID) {
         const player = this.state.players[playerID];
@@ -85,6 +90,7 @@ export default class Game extends React.Component {
                     onAttempt={this.onAttempt}
                     onSurrender={this.handleSurrender}
                     onNumberChange={this.handleNumberChange}
+                    onPlayAgain={this.handlePlayAgain}
                     enabled={isUserEnabled && !isUserFinished}
                 />
             </div>
@@ -183,6 +189,18 @@ class GameBoard extends React.Component {
                     </div>
                 }
                 <History attempts={player.attempts}/>
+                {player.isFinished &&
+                    <div className="row justify-content-center mt-3">
+                        <div className="col-8">
+                            <button
+                                type="button"
+                                className="btn w-100"
+                                onClick={() => this.props.onPlayAgain(player.id)}
+                                disabled={player.wantsReplay}
+                            >Play Again</button>
+                        </div>
+                    </div>
+                }
             </div>
         );
     }

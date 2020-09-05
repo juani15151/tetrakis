@@ -75,6 +75,14 @@ const handleMessage = {
             sendUpdate(ws.roomId);
         }
     },
+    "reset": (ws, data) => {
+        if(ws.roomId && ws.userId) {
+            const roomId = ws.roomId;
+            const room = database.rooms[roomId];
+            Game.resetRoom(room, ws.userId);
+            sendUpdate(roomId);
+        }
+    },
     "close": (ws, data) => {
         // TODO: When no more clients listen to a room, delete it.
         if(ws.roomId && ws.userId) {

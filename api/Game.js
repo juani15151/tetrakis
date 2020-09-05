@@ -20,7 +20,17 @@ module.exports = class Game {
             attempts: [],
             isPlaying: false,
             isFinished: false,
+            wantsReplay: false,
         }
+    }
+
+    static _resetPlayer(player) {
+        player.number = null;
+        player.target = null;
+        player.attempts = [];
+        player.isPlaying = false;
+        player.isFinished = false;
+        player.wantsReplay = false;
     }
 
     static addPlayer(room, user) {
@@ -47,6 +57,14 @@ module.exports = class Game {
         }
 
         room.players[currentUserId] = nextState.players[currentUserId];
+    }
+
+    static resetRoom(room, playerID) {
+        room.players[playerID].wantsReplay = true;
+        if(!Object.values(room.players).find(player => !player.wantsReplay)) {
+            // Reset room when both players want replay.
+            Object.values(room.players).forEach(Game._resetPlayer);
+        }
     }
 
 }

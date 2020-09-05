@@ -103,3 +103,10 @@
 .attempt.badge {
     font-size: 1.75em;
 }
+
+.btn {
+    font-size: 1.25em;
+    font-weight: bold;
+    background-color: #FFDD00;
+    text-align: center;
+}

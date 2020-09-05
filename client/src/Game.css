@@ -82,9 +82,11 @@
 
 .number {
     font-family: 'Roboto Mono', monospace;
-    font-size: 1.75em;
     letter-spacing: .75em;
     padding-left: .75em;
+}
+.form-control.number {
+    font-size: 1.75em;
 }
 
 @media (max-width: 1023px) {

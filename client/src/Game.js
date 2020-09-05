@@ -4,6 +4,7 @@ import user from "./images/user.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import ErrorBoundary from "./utils/ErrorBoundary";
+import NumbersSheet from "./NumbersSheet";
 
 export default class Game extends React.Component {
 
@@ -62,38 +63,37 @@ export default class Game extends React.Component {
     }
 
 
-    renderBoards() {
-        return Object.keys(this.state.players).map((id) => {
-            const player = this.state.players[id];
-            const opponent = this.props.gameService.getOpponent(player);
-            if(!player) {
-                return null; // TODO: Render waiting msg.
-            }
-            const isUserEnabled = this.props.gameService.isPlayerEnabled(player);
-            const isUserFinished = player.isFinished;
+    renderBoard(playerID) {
+        const player = this.state.players[playerID];
+        const opponent = this.props.gameService.getOpponent(player);
+        if(!player) {
+            return null; // TODO: Render waiting msg.
+        }
+        const isUserEnabled = this.props.gameService.isPlayerEnabled(player);
+        const isUserFinished = player.isFinished;
 
-            return (
-                <div
-                    className={'col board-container '
-                    + (this.playerWon(player, opponent) ? 'winner'
-                            : isUserEnabled && !isUserFinished ? '' : 'disabled'
-                    )}
-                    key={id}
-                >
-                    <GameBoard
-                        player={player}
-                        opponent={opponent}
-                        onAttempt={this.onAttempt}
-                        onSurrender={this.handleSurrender}
-                        onNumberChange={this.handleNumberChange}
-                        enabled={isUserEnabled && !isUserFinished}
-                    />
-                </div>
-            );
-        });
+        return (
+            <div
+                className={'col board-container '
+                + (this.playerWon(player, opponent) ? 'winner'
+                        : isUserEnabled && !isUserFinished ? '' : 'disabled'
+                )}
+            >
+                <GameBoard
+                    player={player}
+                    opponent={opponent}
+                    onAttempt={this.onAttempt}
+                    onSurrender={this.handleSurrender}
+                    onNumberChange={this.handleNumberChange}
+                    enabled={isUserEnabled && !isUserFinished}
+                />
+            </div>
+        );
     }
 
     render() {
+        let playerIDs = Object.keys(this.state.players);
+
         return (
             <div className="container game-container">
                 <GameBar
@@ -102,7 +102,11 @@ export default class Game extends React.Component {
                 />
                 <ErrorBoundary>
                     <div className="row text-center">
-                        {this.renderBoards()}
+                        {this.renderBoard(playerIDs[0])}
+                        <div className="col-12 col-md-3 p-0">
+                            <NumbersSheet/>
+                        </div>
+                        {this.renderBoard(playerIDs[1])}
                     </div>
                 </ErrorBoundary>
             </div>
@@ -242,16 +246,17 @@ class BoardBar extends React.Component {
                         <div className='col-12 col-lg-4'>
                             <img className="profile-picture rounded-circle" src={user}/>
                         </div>
-                        <div className='col-12 col-lg-8 text-center text-lg-left'>
-                            <div className='pl-2'>{this.renderName()}</div>
+                        <div className='col-12 col-lg-8 text-center'>
+                            <div className="row">
+                                <div className='col'>{this.renderName()}</div>
+                            </div>
+                            <div className="row">
+                                <div className="col number">{this.renderTargetNumber()}</div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div
-                    className='col-12 col-xl-4 text-center text-xl-right'
-                    onClick={this.props.onSurrender}
-                    title="Click to surrender and reveal the target number."
-                ><div className="number">{this.renderTargetNumber()}</div></div>
             </div>
         );
     }

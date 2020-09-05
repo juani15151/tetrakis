@@ -43,7 +43,7 @@ export default class Game extends React.Component {
 
     getTitle() {
         if(this.state.roomId) {
-            return "Game Room # " + this.state.roomId;
+            return "Game code: " + this.state.roomId;
         } else {
             return "Local Game";
         }

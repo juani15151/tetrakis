@@ -61,7 +61,7 @@ class Tile extends React.Component {
 
         return (
             <td
-                className={currentLetter === "." ? 'hide-char' : ''}
+                className={"tile " + (currentLetter === "." ? 'hide-char' : '')}
                 onClick={this.nextChar}>
                 {currentLetter}
             </td>

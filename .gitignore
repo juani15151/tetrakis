@@ -1,7 +1,8 @@
 # development
 .idea/
-ngrok.yml
 *.env
+ngrok.yml
+/start-ngrok.bat
 
 # production
 node_modules/

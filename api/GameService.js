@@ -8,7 +8,7 @@ let gameCore = new GameCore();
 /**
  * This file is responsible of all the available game actions and interaction with the players, which are then processed using the GameCore class.
  *
- * TODO: Remove this class and use the Game.js class instead.
+ * TODO: Remove this class and use the Game.js class instead (creating a room with a single user and an optional passive or active bot).
  */
 router.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');

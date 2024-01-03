@@ -9,6 +9,7 @@ module.exports = class Game {
         let room = {
             roomId: id,
             players: {}
+            // TODO: Add server-side signature to all validated states, clients should confirm the signature before accepting the new state.
         }
         room.players[user.id] = this._newPlayer(user)
         return room
@@ -43,7 +44,7 @@ module.exports = class Game {
 
     static removePlayer(room, playerId) {
         if (room.players[playerId]) {
-            room.players[playerId].isBot = true;
+            room.players[playerId].isBot = true; // TODO: Not sure about this.
         }
     }
 

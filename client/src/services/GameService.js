@@ -1,3 +1,20 @@
+class Player { // interface
+    isBot
+    id
+    name
+    number
+    target
+    attempts
+    isPlaying
+    isFinished
+    wantsReplay
+}
+
+class Attempt { // interface
+    number
+    result // Array: [B, R]
+}
+
 export default class GameService {
 
     constructor() {
@@ -30,12 +47,12 @@ export default class GameService {
         this.stateListeners = this.stateListeners.filter((item) => item !== fn);
     }
 
-    actionAttempt(playerID, attempt) {
+    async actionAttempt(playerID, attempt) {
         if (!GameUtils.isValidNumber(attempt) || this.state.players[playerID].isFinished) {
             return;
         }
 
-        const result = GameUtils.checkNumber(attempt, this.state.players[playerID].target);
+        const result = await this._checkNumber(attempt, this.state.players[playerID].target);
 
         const state = this.getState();
         state.players[playerID].attempts.push({
@@ -46,6 +63,10 @@ export default class GameService {
 
         this.onAfterActionAttempt(playerID, attempt, state);
         this.setState(state);
+    }
+
+    async _checkNumber(attempt, target) {
+        return GameUtils.checkNumber(attempt, target);
     }
 
     onAfterActionAttempt(playerID, attempt, state) {

@@ -15,7 +15,7 @@ the amount of (R)egular digits in the guess.
   * (i) Players know the amount of Correct and Regular, but they don't know which digits of their guess are the corrects, regulars, or not present.
 * The game ends when a player correctly guesses all 4 digits of the opponent in the correct order (4 Corrects).
   * The traditional (in-person) game is turn-based, but on the digital version both players can play simultaneously doing guesses, so there are no ties. 
-  If both players take the same amount of rounds then the one that finished earlier wins.
+  If both players take the same amount of rounds then the one that finished earlier wins (time runs between first and last attempt).
 
 ## About the project
 
@@ -43,6 +43,8 @@ backend on trusted networks as it can be easily circumvented to be used for remo
 * Websockets
 * Bootstrap
 * Node.js
+  * express and express-ws (for API and WebSocket)
+  * crypto (for secret number encryption)
 * Swagger [ToDo]
 * Docker [ToDo]
 * ngrok (for local deployments)

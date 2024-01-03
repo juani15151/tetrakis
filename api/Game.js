@@ -1,22 +1,26 @@
+interface Guess {
+    timestamp,
+    number
+}
+
 module.exports = class Game {
 
     static initializeRoom(id, user) {
-        return {
+        let room = {
             roomId: id,
-            players: {
-                1: this._newPlayer(user),
-                2: this._newPlayer({id: 2}, true),
-            }
+            players: {}
         }
+        room.players[user.id] = this._newPlayer(user)
+        return room
     }
 
     static _newPlayer(user, isBot) {
         return {
             isBot: !!isBot,
-            id: user.id,
+            id: isBot ? user.id + "-bot" : user.id,
             name: user.name || "Player " + user.id,
             number: null,
-            target: null,
+            target: null, // TODO: Remove.
             attempts: [],
             isPlaying: false,
             isFinished: false,
@@ -33,16 +37,12 @@ module.exports = class Game {
         player.wantsReplay = false;
     }
 
-    static addPlayer(room, user) {
-        if(room.players[2].isBot) {
-            room.players[2].isBot = false;
-            return true;
-        }
-        return false;
+    static addPlayer(room, user, isBot) {
+        room.players[user.id] = this._newPlayer(user, isBot);
     }
 
     static removePlayer(room, playerId) {
-        if(room.players[playerId]) {
+        if (room.players[playerId]) {
             room.players[playerId].isBot = true;
         }
     }

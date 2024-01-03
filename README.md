@@ -1,3 +1,67 @@
+# Tetrakis
+
+This is the digitalization of the paper game "Tetrakis" done as a way to experiment with technologies and with user to 
+user interactions.
+
+## Game rules
+* Both players start by choosing a 4 digit secret number, each digit should be unique (non-repeteable).
+* Now each player has to guess the number of the other one. On each round a player sends a guess, 
+and the other player will respond with the amount of (C)orrect / *"(B)ien"* digits and 
+the amount of (R)egular digits in the guess.
+  * A Regular digit occurs when the digit of the guess number is present in the secret number, in any position, e.g. 
+  secret 4567 and guess 1234 will produce 1 Regular (the number 4).   
+  * A Correct digit is a regular digit that also is in the same position, e.g. secret 7654 and guess 1234 have 
+  will produce 1 Correct digit (the number 4).
+  * (i) Players know the amount of Correct and Regular, but they don't know which digits of their guess are the corrects, regulars, or not present.
+* The game ends when a player correctly guesses all 4 digits of the opponent in the correct order (4 Corrects).
+  * The traditional (in-person) game is turn-based, but on the digital version both players can play simultaneously doing guesses, so there are no ties. 
+  If both players take the same amount of rounds then the one that finished earlier wins.
+
+## About the project
+
+This project consists of a client-server architecture where the server is only required to enforce the game rules on multiplayer games.
+
+The front-end was built using **React.js** and can be run independently of the backend, allowing to run single-pc game modes.
+It has a simple architecture with 2 components:
+* The main component is the GameService (client/src/services/GameService.js) which is basically the game engine and has 
+subclasses for each game mode done (and any possible future modes).
+* An independent secondary component is the NumbersSheet (client/src/NumbersSheet.js) which displays a board that players
+can use to aid themselves during the guessing.
+
+The backend was built using **Node.js** and the objective is to keep it completely stateless (and possibly moved from Node.js 
+to AWS Lambda or similar).
+
+When each player chooses their number, it's encrypted and sent to the other player, then they can do guesses and the server 
+can easily decrypt the number and calculate the correct and regular numbers without requiring any persistence. When doing so,
+it can also uses a NotificationService (currently based on a WebSocket) to inform the other player about the progress.
+
+**WARNING**: This is an experimentation project and there are security issues that won't be addressed, so only expose the Node.js 
+backend on trusted networks as it can be easily circumvented to be used for remote code execution on the other player's computer.
+
+### Technologies involved
+* React.js
+* Websockets
+* Bootstrap
+* Node.js
+* Swagger [ToDo]
+* Docker [ToDo]
+* ngrok (for local deployments)
+
+## How to run
+
+### Development
+* Start the server going to /api and running `npm start` 
+  * Port configuration is handled through environment variables (Work in Progress).
+* To start the client first set the server paths in a client/.env file and the run `npm start` in the /client folder.
+
+
+### Docker
+* [ToDo]
+
+
+----
+Original bundle data, kept until docker setup is done.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

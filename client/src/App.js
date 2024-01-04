@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Game from './Game';
-import MultiplayerGameService from './services/MultiplayerGameService';
+import LocalPlayersGameService from './services/LocalPlayersGameService';
 import OnlineGameService from "./services/OnlineGameService";
 import ErrorBoundary from "./utils/ErrorBoundary";
 import SinglePlayerOnlineService from "./services/SinglePlayerOnlineService";
@@ -31,7 +31,7 @@ export default class App extends React.Component {
             });
         } else if (App.GAME_MODES.LOCAL === gameMode) {
             this.setState({
-                gameService: new MultiplayerGameService()
+                gameService: new LocalPlayersGameService()
             });
         } else if (App.GAME_MODES.ONLINE === gameMode) {
             this.setState({

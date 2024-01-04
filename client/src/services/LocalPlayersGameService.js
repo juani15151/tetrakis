@@ -1,6 +1,6 @@
 import GameService from './GameService';
 
-export default class MultiplayerGameService extends GameService {
+export default class LocalPlayersGameService extends GameService {
 
     constructor() {
         super();

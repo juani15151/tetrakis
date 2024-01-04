@@ -15,6 +15,15 @@ class Attempt { // interface
     result // Array: [B, R]
 }
 
+/**
+ * Main class to handle the game flow, it's extended by subclasses that resolve certain steps in different ways.
+ *
+ * Actions:
+ * * SetNumber: Choose your own number (used on multi-player modes)
+ * * Attempt: Making a guess of the target (secret) number.
+ * * Surrender: Abandon a game in progress.
+ * * PlayAgain: Reset a game after it finished.
+ */
 export default class GameService {
 
     constructor() {

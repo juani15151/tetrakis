@@ -1,5 +1,10 @@
 import GameService from "./GameService";
 
+/**
+ * Controls the SinglePlayer game mode.
+ *
+ * An encrypted random number is requested to the server and each guess is sent to the server for calculation.
+ */
 export default class SinglePlayerOnlineService extends GameService {
 
     constructor() {
@@ -10,12 +15,11 @@ export default class SinglePlayerOnlineService extends GameService {
         this.setState(state);
 
         fetch(process.env.REACT_APP_SERVER_API_URL + "/api/game/number/random")
-            .then(res => {
-                res.text().then(encryptedNumber => {
-                    let state = this.getState();
-                    state.players[0].target = encryptedNumber;
-                    this.setState(state);
-                });
+            .then(res => res.text())
+            .then(encryptedNumber => {
+                let state = this.getState();
+                state.players[0].target = encryptedNumber;
+                this.setState(state);
             })
             .catch(e => {
                 alert(e);

@@ -13,13 +13,14 @@ the amount of (R)egular digits in the guess.
   * A Correct digit is a regular digit that also is in the same position, e.g. secret 7654 and guess 1234 have 
   will produce 1 Correct digit (the number 4).
   * (i) Players know the amount of Correct and Regular, but they don't know which digits of their guess are the corrects, regulars, or not present.
-* The game ends when a player correctly guesses all 4 digits of the opponent in the correct order (4 Corrects).
-  * The traditional (in-person) game is turn-based, but on the digital version both players can play simultaneously doing guesses, so there are no ties. 
-  If both players take the same amount of rounds then the one that finished earlier wins (time runs between first and last attempt).
+* The game ends when a player correctly guesses all 4 digits of the opponent in the correct order (4 Corrects), the player
+with the lower amount of guesses wins.
 
 ## About the project
 
 This project consists of a client-server architecture where the server is only required to enforce the game rules on multiplayer games.
+
+As an experimentation project **it aims to be over-commented** for future reference.
 
 The front-end was built using **React.js** and can be run independently of the backend, allowing to run single-pc game modes.
 It has a simple architecture with 2 components:

@@ -162,6 +162,7 @@ class GameModeMenu extends React.Component {
                             type="button"
                             className="btn text-nowrap w-100"
                             onClick={() => {this.props.onSetGameMode(App.GAME_MODES.ONLINE)}}
+                            disabled={this.state.roomId.length > 0}
                         >Create game</button>
                     </div>
                 </div>

@@ -83,4 +83,7 @@ export default class OnlineGameService extends GameService {
         return this.currentUserId === player.id;
     }
 
+    isLocalPlayer(player): boolean {
+        return this.isPlayerEnabled(player);
+    }
 }

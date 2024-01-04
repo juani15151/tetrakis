@@ -107,7 +107,10 @@ export default class GameService {
         // Extension point for subclasses.
     }
 
-    isPlayerEnabled(player) {
+    isPlayerEnabled(player): boolean {
+        throw Error("Not implemented"); // MUST be implemented by subclasses.
+    }
+    isLocalPlayer(player): boolean {
         throw Error("Not implemented"); // MUST be implemented by subclasses.
     }
 

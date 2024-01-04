@@ -5,8 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import ErrorBoundary from "./utils/ErrorBoundary";
 import NumbersSheet from "./NumbersSheet";
-import App from "./App";
 
+/**
+ * The main component once a game mode has been selected, it wraps everything in the UI and connects to the GameService.
+ */
 export default class Game extends React.Component {
 
     constructor(props) {
@@ -71,34 +73,49 @@ export default class Game extends React.Component {
     renderBoard(playerID) {
         const player = this.state.players[playerID];
         const opponent = this.props.gameService.getOpponent(player);
-        if(!player) {
+        if (!player) {
             return null; // TODO: Render waiting msg.
         }
         const isUserEnabled = this.props.gameService.isPlayerEnabled(player);
+        const isLocalPlayer = this.props.gameService.isLocalPlayer(player);
         const isUserFinished = player.isFinished;
 
         return (
-            <div
-                className={'col board-container '
-                + (this.playerWon(player, opponent) ? 'winner'
-                        : isUserEnabled && !isUserFinished ? '' : 'disabled'
-                )}
-            >
-                <GameBoard
-                    player={player}
-                    opponent={opponent}
-                    onAttempt={this.onAttempt}
-                    onSurrender={this.handleSurrender}
-                    onNumberChange={this.handleNumberChange}
-                    onPlayAgain={this.handlePlayAgain}
-                    enabled={isUserEnabled && !isUserFinished}
-                />
+            <div className="row">
+                <div
+                    className={'col-8 board-container '
+                        + (this.playerWon(player, opponent) ? 'winner'
+                                : isUserEnabled && !isUserFinished ? '' : 'disabled'
+                        )}
+                >
+                    <GameBoard
+                        player={player}
+                        opponent={opponent}
+                        onAttempt={this.onAttempt}
+                        onSurrender={this.handleSurrender}
+                        onNumberChange={this.handleNumberChange}
+                        onPlayAgain={this.handlePlayAgain}
+                        enabled={isUserEnabled && !isUserFinished}
+                    />
+                </div>
+                {isLocalPlayer &&
+                <div className="col-4 p-0">
+                    <NumbersSheet/>
+                </div>
+                }
             </div>
         );
     }
 
     render() {
         let playerIDs = Object.keys(this.state.players);
+
+        // Current game modes allow up to 2 players, but it might be extended with new modes.
+        let playerBoards = playerIDs.map(playerID => (
+            <div className={playerIDs.length > 1 ? "col-6" : "col-12"}>
+                {this.renderBoard(playerID)}
+            </div>
+        ));
 
         return (
             <div className="container game-container">
@@ -108,12 +125,7 @@ export default class Game extends React.Component {
                 />
                 <ErrorBoundary>
                     <div className="row text-center">
-                        {this.renderBoard(playerIDs[0])}
-                        {/* TODO: When playing locally with 2 players, we need 2 boards. */}
-                        <div className="col-12 col-md-3 p-0">
-                            <NumbersSheet/>
-                        </div>
-                        {this.renderBoard(playerIDs[1])}
+                        {playerBoards}
                     </div>
                 </ErrorBoundary>
             </div>
@@ -121,6 +133,11 @@ export default class Game extends React.Component {
     }
 }
 
+/**
+ * A top bar visible during gameplay.
+ *
+ * It displays game mode title and allows to exit the game at any time.
+ */
 class GameBar extends React.Component {
     render() {
         return (
@@ -139,6 +156,9 @@ class GameBar extends React.Component {
     }
 }
 
+/**
+ * The board where each player takes guesses and sees the results.
+ */
 class GameBoard extends React.Component {
 
     render() {
@@ -207,6 +227,9 @@ class GameBoard extends React.Component {
 
 }
 
+/**
+ * Displays player information (avatar, name, secret number).
+ */
 class BoardBar extends React.Component {
 
     constructor(props) {
@@ -284,6 +307,11 @@ class BoardBar extends React.Component {
 
 }
 
+/**
+ * A number input that validates the number against the game rules and prevents the user from writing invalid ones.
+ *
+ * TODO: Validate the number against the GameService to allow custom digit-format rules.
+ */
 class NumberInput extends  React.Component {
 
     constructor(props) {
@@ -355,6 +383,9 @@ class NumberInput extends  React.Component {
 
 }
 
+/**
+ * A list with all the player guess attempts and their result.
+ */
 class History extends React.Component {
 
     render() {

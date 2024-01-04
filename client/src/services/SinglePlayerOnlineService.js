@@ -56,6 +56,10 @@ export default class SinglePlayerOnlineService extends GameService {
         return true;
     }
 
+    isLocalPlayer(player): boolean {
+        return true;
+    }
+
     getOpponent(currentPlayer) {
         return currentPlayer;
     }

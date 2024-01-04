@@ -1,5 +1,12 @@
 import GameService from './GameService';
 
+/**
+ * Controls a 2-Player game where both players user the same computer.
+ *
+ * This variation is turn-based and users are responsible for not looking at the opponents number during setup.
+ * All calculations are done on the browser (via the parent class 'GameService'), so once the application is loaded it
+ * can work offline.
+ */
 export default class LocalPlayersGameService extends GameService {
 
     constructor() {
@@ -52,5 +59,9 @@ export default class LocalPlayersGameService extends GameService {
 
     isPlayerEnabled(player) {
         return !player.number || (player.target && player.isPlaying);
+    }
+
+    isLocalPlayer(player) {
+        return true;
     }
 }

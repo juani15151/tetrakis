@@ -1,8 +1,3 @@
-interface Guess {
-    timestamp,
-    number
-}
-
 module.exports = class Game {
 
     static initializeRoom(id, user) {

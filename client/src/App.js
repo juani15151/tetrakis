@@ -4,6 +4,7 @@ import Game from './Game';
 import MultiplayerGameService from './services/MultiplayerGameService';
 import OnlineGameService from "./services/OnlineGameService";
 import ErrorBoundary from "./utils/ErrorBoundary";
+import SinglePlayerOnlineService from "./services/SinglePlayerOnlineService";
 
 export default class App extends React.Component {
 
@@ -25,7 +26,9 @@ export default class App extends React.Component {
 
     handleSetGameMode(gameMode, roomId) {
         if (App.GAME_MODES.SINGLEPLAYER === gameMode) {
-
+            this.setState({
+                gameService: new SinglePlayerOnlineService()
+            });
         } else if (App.GAME_MODES.LOCAL === gameMode) {
             this.setState({
                 gameService: new MultiplayerGameService()
@@ -119,13 +122,11 @@ class GameModeMenu extends React.Component {
         return (
             <div>
                 <div className="row justify-content-center">
-                    {/* TODO: Enable singleplayer mode. */}
                     <div className="col-12">
                         <button
                             type="button"
                             className="btn w-100"
                             onClick={() => {this.props.onSetGameMode(App.GAME_MODES.SINGLEPLAYER)}}
-                            disabled={true}
                         >1 Player</button>
                     </div>
                 </div>

@@ -28,6 +28,8 @@ subclasses for each game mode done (and any possible future modes).
 * An independent secondary component is the NumbersSheet (client/src/NumbersSheet.js) which displays a board that players
 can use to aid themselves during the guessing.
 
+Error handling has been kept to a basic level only (i.e. using alerts) as most issues shouldn't be possible to trigger from the standard UI.
+
 The backend was built using **Node.js** and the objective is to keep it completely stateless (and possibly moved from Node.js 
 to AWS Lambda or similar).
 

@@ -38,8 +38,13 @@ router.get('/number/check', function (req, res) {
         res.status(400).send('Invalid guess number');
     }
 
-    const hiddenTarget = req.query['target'];
-    const targetNumber = Encrypter.decrypt(hiddenTarget);
+    const encryptedTarget = req.query['target'];
+    let targetNumber;
+    try {
+        targetNumber = Encrypter.decrypt(encryptedTarget);
+    } catch (e) {
+        res.status(400).send('Invalid target number');
+    }
     if (!gameCore.isValidNumber(targetNumber)) {
         res.status(400).send('Invalid target number');
     }

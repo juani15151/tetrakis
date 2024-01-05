@@ -9,13 +9,7 @@
     "express-ws": "^4.0.0",
     "http-proxy-middleware": "^1.0.4"
   },
-  "devDependencies": {
-    "nodemon": "^2.0.4",
-    "webpack": "^4.43.0"
-  },
   "scripts": {
-    "start": "node server.bundle.js",
-    "build": "webpack",
-    "dev": "nodemon ./server.js localhost 3080"
+    "start": "node server.js"
   }
 }

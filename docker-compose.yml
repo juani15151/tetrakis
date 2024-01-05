@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: ./api
+      args:
+        - NODE_ENV=production
+    ports:
+      - "3080:3080"
+      - "3081:3081"
+  frontend:
+      build:
+        context: ./client
+        args:
+          # User facing URIs - Use the public URL that can access these containers.
+          - REACT_APP_SERVER_URL=ws://localhost:3080
+          - REACT_APP_SERVER_API_URL=http://localhost:3081
+      ports:
+        - "80:80"

@@ -5,7 +5,8 @@ const wsInstance = expressWs(express());
 const app = wsInstance.app;
 const crypto = require('crypto');
 
-const bodyParser = require("body-parser"); // TODO: Remove if not required on WebSocket.
+const bodyParser = require("body-parser");
+const Encrypter = require("./Encrypter"); // TODO: Remove if not required on WebSocket.
 const port = 3080; // TODO: Read from environment.
 
 
@@ -59,18 +60,19 @@ const handleMessage = {
      */
     "join": (ws, data) => {
         ws.userId = ws.userId || getNewUserUUID();
-        const roomId = data.roomId; // TODO: Validate it's an UUID.
-        let room = database.rooms[roomId];
+        let roomId = data.roomId; // TODO: Validate it's an UUID.
+        let room = roomId != null ? database.rooms[roomId] : null;
 
         if (!room) {
-            room = Game.initializeRoom(ws.roomId, {id: ws.userId});
+            roomId = Encrypter.getUUID();
+            room = Game.initializeRoom(roomId, {id: ws.userId});
             database.rooms[roomId] = room;
         }
 
         // TODO: Validate only 2 active users per room?
         ws.roomId = roomId;
 
-        Game.addPlayer(roomId, {id: ws.userId}, data.isBot);
+        Game.addPlayer(room, {id: ws.userId}, data.isBot);
         if (!data.isBot) {
             ws.send(JSON.stringify({
                 type: 'setUserId',
@@ -84,8 +86,8 @@ const handleMessage = {
     },
     "update": (ws, data) => {
         const room = database.rooms[ws.roomId];
-        if(room) {
-            Game.updateRoom(room, data);
+        if (room) {
+            Game.updateRoom(room, ws.userId, data);
             sendUpdate(ws.roomId);
         }
     },

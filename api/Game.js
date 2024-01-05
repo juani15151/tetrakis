@@ -14,7 +14,7 @@ module.exports = class Game {
         return {
             isBot: !!isBot,
             id: isBot ? user.id + "-bot" : user.id,
-            name: user.name || "Player " + user.id,
+            name: user.name || "Player " + user.id[0],
             number: null,
             target: null, // TODO: Remove.
             attempts: [],
@@ -43,15 +43,21 @@ module.exports = class Game {
         }
     }
 
-    static updateRoom(room, nextState) {
+    static updateRoom(room, currentUserId, nextState) {
         // TODO: Validate user input.
-        const currentUserId = Object.keys(nextState.players)[0];
-        const opponentId = currentUserId === "2" ? 1 : 2;
+        const opponentId = Object.keys(room.players).find(id => id !== currentUserId);
 
-        if(!room.players[opponentId].target && nextState.players[currentUserId].number) {
+        // Update the opponent target based on the current user number.
+        if (opponentId && !room.players[opponentId].target && nextState.players[currentUserId].number) {
             room.players[opponentId].target = nextState.players[currentUserId].number;
         }
 
+        // Update the current user target based on the opponent number.
+        if (opponentId && !nextState.players[currentUserId].target && room.players[opponentId].number) {
+            nextState.players[currentUserId].target = room.players[opponentId].number;
+        }
+
+        // A player can only modify itself.
         room.players[currentUserId] = nextState.players[currentUserId];
     }
 

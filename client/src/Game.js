@@ -83,9 +83,10 @@ export default class Game extends React.Component {
         return (
             <div className="row">
                 <div
-                    className={'col-8 board-container '
-                        + (this.playerWon(player, opponent) ? 'winner'
-                                : isUserEnabled && !isUserFinished ? '' : 'disabled'
+                    className={'board-container '
+                        + (isLocalPlayer ? 'col-8 ' : 'col-12 ')
+                        + (this.playerWon(player, opponent) ? 'winner '
+                                : isUserEnabled && !isUserFinished ? '' : 'disabled '
                         )}
                 >
                     <GameBoard
@@ -256,7 +257,7 @@ class BoardBar extends React.Component {
     }
 
     renderTargetNumber() {
-        if (this.props.opponent.isFinished) {
+        if (this.props.opponent && this.props.opponent.isFinished) {
             return this.props.player.number;
         } else if (this.props.player.number) {
             return "####";

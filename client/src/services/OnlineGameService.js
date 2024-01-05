@@ -16,18 +16,13 @@ export default class OnlineGameService extends GameService {
 
         this.roomSocket.onopen = () => {
             console.log("Connected to room server");
-            if(!roomId) {
-                this.roomSocket.send(JSON.stringify({
-                    type: "create"
-                }));
-            } else {
-                this.roomSocket.send(JSON.stringify({
-                    type: "join",
-                    data: {
-                        roomId: roomId
-                    }
-                }));
-            }
+            this.roomSocket.send(JSON.stringify({
+                type: "join",
+                data: {
+                    roomId: roomId || null
+                }
+            }));
+            // The server will send back an update message through the websocket and initialize the state.
         };
 
         this.roomSocket.onmessage = this.onMessage;

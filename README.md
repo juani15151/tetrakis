@@ -18,38 +18,61 @@ with the lower amount of guesses wins.
 
 ## About the project
 
-This project consists of a client-server architecture where the server is only required to enforce the game rules on multiplayer games.
+This project consists of a client-server architecture where the server is only required to enforce the game rules on 
+multiplayer games.
 
 As an experimentation project **it aims to be over-commented** for future reference.
 
 The front-end was built using **React.js** and can be run independently of the backend, allowing to run single-pc game modes.
 It has a simple architecture with 2 components:
 * The main component is the GameService (client/src/services/GameService.js) which is basically the game engine and has 
-subclasses for each game mode done (and any possible future modes).
+subclasses for each game mode (and any possible future modes).
 * An independent secondary component is the NumbersSheet (client/src/NumbersSheet.js) which displays a board that players
 can use to aid themselves during the guessing.
 
-Error handling has been kept to a basic level only (i.e. using alerts) as most issues shouldn't be possible to trigger from the standard UI.
+Error handling has been kept to a basic level only (i.e. using alerts and a few general ErrorBoundaries) as most issues 
+shouldn't be possible to trigger from the standard UI.
 
-The backend was built using **Node.js** and the objective is to keep it completely stateless (and possibly moved from Node.js 
-to AWS Lambda or similar).
+The backend was built using **Node.js** and express for handling API endpoints, with the help of single-key encryption.
 
 When each player chooses their number, it's encrypted and sent to the other player, then they can do guesses and the server 
 can easily decrypt the number and calculate the correct and regular numbers without requiring any persistence. When doing so,
 it can also uses a NotificationService (currently based on a WebSocket) to inform the other player about the progress.
+
+## Design notes
+* Game modes: This game can be expanded by adding new game modes with custom rules (e.g. different number format, time-based win)
+and with different amount of players (N-Player game).
+  * To prepare for this, we use a single Interface for all game modes, that can be easily extended by new modes without 
+  having to override existing behavior nor refactor other modes.
+* Stateful vs Stateless: As part of the experimentation, different game modes have been implemented with different patterns.
+  * SinglePlayer mode communicates with the server in a completely stateless manner.
+  * 2-Local Players mode is completely isolated from the server.
+  * Multiplayer mode is stateful, although the server can safely use an in-memory database.
+    * (!) Current implementation uses a local in-memory database, which is not shared among backend servers, which would limit horizontal escalation.
+* Next steps:
+  * It might be possible to make the current multiplayer mode stateless:
+    * Players can store the state, but it would be signed by the server to avoid custom modifications.
+    * It would need a P2P Websocket or some similar alternative.
+  * The plan is to eventually move the application to the cloud (AWS).
+    * Use either AWS Amplify, AWS S3 or AWS ECS + LoadBalancer for the static front-end. 
+    * Use AWS Lambda for the backend of stateless game modes.
+    * Use AWS Websockets APIs (API Gateway) for the stateful game mode + DynamoDB to keep rooms state.
+      * Will have to add some periodic cleanup of old rooms.
+    * Use AWS Route53 to register and manage a domain. 
 
 **WARNING**: This is an experimentation project and there are security issues that won't be addressed, so only expose the Node.js 
 backend on trusted networks as it can be easily circumvented to be used for remote code execution on the other player's computer.
 
 ### Technologies involved
 * React.js
-* Websockets
-* Bootstrap
+  * bootstrap
+  * websocket
 * Node.js
   * express and express-ws (for API and WebSocket)
   * crypto (for secret number encryption)
 * Swagger [ToDo]
-* Docker [ToDo]
+* Docker
+  * nginx (for React.js production deployment) 
 * ngrok (for local deployments)
 
 ## How to run
@@ -59,79 +82,6 @@ backend on trusted networks as it can be easily circumvented to be used for remo
   * Port configuration is handled through environment variables (Work in Progress).
 * To start the client first set the server paths in a client/.env file and the run `npm start` in the /client folder.
 
-
-### Docker
-* [ToDo]
-
-
-----
-Original bundle data, kept until docker setup is done.
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+### Docker (Production)
+* Run docker-compose in the root folder to build and run both frontend and backend.
+  * If deployed to AWS, each Dockerfile can be deployed independently to scale as needed.

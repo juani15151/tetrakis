@@ -64,7 +64,7 @@ const handleMessage = {
         let room = roomId != null ? database.rooms[roomId] : null;
 
         if (!room) {
-            roomId = Encrypter.getUUID();
+            roomId = Encrypter.getUUID().split("-")[0];
             room = Game.initializeRoom(roomId, {id: ws.userId});
             database.rooms[roomId] = room;
         }
